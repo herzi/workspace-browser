@@ -26,7 +26,7 @@ workspace_created_cb (WnckScreen   * screen,
                       WnckWorkspace* workspace,
                       gpointer       user_data)
 {
-  GtkWidget* button = gtk_button_new_with_label (wnck_workspace_get_name (workspace));
+  GtkWidget* button = gtk_toggle_button_new_with_label (wnck_workspace_get_name (workspace));
   /* FIXME: update to renames */
 
   gtk_widget_show (button);
