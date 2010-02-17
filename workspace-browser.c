@@ -24,6 +24,8 @@
 
 #define WA_WORKSPACE "WorkspaceApplet::Workspace"
 
+G_DEFINE_TYPE (WorkspaceBrowser, workspace_browser, GTK_TYPE_HBOX);
+
 static GtkWidget* menu = NULL;
 
 static void
@@ -170,19 +172,26 @@ workspace_destroyed_cb (WnckScreen   * screen,
   g_list_free (children);
 }
 
+static void
+workspace_browser_init (WorkspaceBrowser* self)
+{
+  WnckScreen* screen = wnck_screen_get_default ();
+
+  g_signal_connect (screen, "workspace-created",
+                    G_CALLBACK (workspace_created_cb), self);
+  g_signal_connect (screen, "workspace-destroyed",
+                    G_CALLBACK (workspace_destroyed_cb), self);
+}
+
+static void
+workspace_browser_class_init (WorkspaceBrowserClass* self_class)
+{}
+
 GtkWidget*
 workspace_browser_new (void)
 {
-  WnckScreen* screen;
-  GtkWidget * result = gtk_hbox_new (TRUE, 0);
-
-  screen = wnck_screen_get_default ();
-  g_signal_connect (screen, "workspace-created",
-                    G_CALLBACK (workspace_created_cb), result);
-  g_signal_connect (screen, "workspace-destroyed",
-                    G_CALLBACK (workspace_destroyed_cb), result);
-
-  return result;
+  return g_object_new (WORKSPACE_TYPE_BROWSER,
+                       NULL);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

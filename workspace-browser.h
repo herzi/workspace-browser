@@ -25,7 +25,30 @@
 
 G_BEGIN_DECLS
 
-GtkWidget* workspace_browser_new (void);
+typedef struct _WorkspaceBrowser        WorkspaceBrowser;
+typedef struct _WorkspaceBrowserClass   WorkspaceBrowserClass;
+typedef struct _WorkspaceBrowserPrivate WorkspaceBrowserPrivate;
+
+#define WORKSPACE_TYPE_BROWSER         (workspace_browser_get_type ())
+#define WORKSPACE_BROWSER(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), WORKSPACE_TYPE_BROWSER, WorkspaceBrowser))
+#define WORKSPACE_BROWSER_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), WORKSPACE_TYPE_BROWSER, WorkspaceBrowserClass))
+#define WORKSPACE_IS_BROWSER(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), WORKSPACE_TYPE_BROWSER))
+#define WORKSPACE_IS_BROWSER_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), WORKSPACE_TYPE_BROWSER))
+#define WORKSPACE_BROWSER_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), WORKSPACE_TYPE_BROWSER, WorkspaceBrowserClass))
+
+GType      workspace_browser_get_type (void);
+GtkWidget* workspace_browser_new      (void);
+
+struct _WorkspaceBrowser
+{
+  GtkHBox                  base_instance;
+  WorkspaceBrowserPrivate* _private;
+};
+
+struct _WorkspaceBrowserClass
+{
+  GtkHBoxClass             base_class;
+};
 
 G_END_DECLS
 
