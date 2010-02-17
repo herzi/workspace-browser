@@ -22,11 +22,18 @@
 #include "window-menu-item.h"
 #include <glib/gi18n.h>
 
+struct _WorkspaceButtonPrivate
+{
+  WnckWorkspace* workspace;
+};
+
 enum
 {
   PROP_0,
   PROP_WORKSPACE
 };
+
+#define PRIV(i) (((WorkspaceButton*)(i))->_private)
 
 static GtkWidget* menu = NULL;
 
@@ -119,8 +126,7 @@ button_toggled_cb (GtkToggleButton* button,
 static void
 workspace_button_init (WorkspaceButton* self)
 {
-#if 0
-#endif
+  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, WORKSPACE_TYPE_BUTTON, WorkspaceButtonPrivate);
 }
 
 static void
@@ -140,13 +146,15 @@ set_property (GObject     * object,
       GtkWidget* label;
     case PROP_WORKSPACE:
       /* FIXME: update to renames */
-      label = gtk_label_new (wnck_workspace_get_name (g_value_get_object (value)));
+      g_return_if_fail (!PRIV (object)->workspace);
+      PRIV (object)->workspace = g_value_get_object (value);
+      label = gtk_label_new (wnck_workspace_get_name (PRIV (object)->workspace));
       gtk_widget_show (label);
       gtk_container_add (GTK_CONTAINER (object), label);
 
-      /* FIXME: add private data field and use the class handler */
+      /* FIXME: use the class handler */
       g_signal_connect (object, "toggled",
-                        G_CALLBACK (button_toggled_cb), g_value_get_object (value));
+                        G_CALLBACK (button_toggled_cb), PRIV (object)->workspace);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -166,6 +174,8 @@ workspace_button_class_init (WorkspaceButtonClass* self_class)
                                    g_param_spec_object ("workspace", NULL, NULL,
                                                         WNCK_TYPE_WORKSPACE,
                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+  g_type_class_add_private (self_class, sizeof (WorkspaceButtonPrivate));
 }
 
 GtkWidget*
