@@ -26,7 +26,30 @@
 
 G_BEGIN_DECLS
 
-GtkWidget* workspace_button_new (WnckWorkspace* workspace);
+typedef struct _WorkspaceButton        WorkspaceButton;
+typedef struct _WorkspaceButtonClass   WorkspaceButtonClass;
+typedef struct _WorkspaceButtonPrivate WorkspaceButtonPrivate;
+
+#define WORKSPACE_TYPE_BUTTON         (workspace_button_get_type ())
+#define WORKSPACE_BUTTON(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), WORKSPACE_TYPE_BUTTON, WorkspaceButton))
+#define WORKSPACE_BUTTON_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), WORKSPACE_TYPE_BUTTON, WorkspaceButtonClass))
+#define WORKSPACE_IS_BUTTON(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), WORKSPACE_TYPE_BUTTON))
+#define WORKSPACE_IS_BUTTON_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), WORKSPACE_TYPE_BUTTON))
+#define WORKSPACE_BUTTON_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), WORKSPACE_TYPE_BUTTON, WorkspaceButtonClass))
+
+GType      workspace_button_get_type (void);
+GtkWidget* workspace_button_new      (WnckWorkspace* workspace);
+
+struct _WorkspaceButton
+{
+  GtkToggleButton         base_instance;
+  WorkspaceButtonPrivate* _private;
+};
+
+struct _WorkspaceButtonClass
+{
+  GtkToggleButtonClass    base_class;
+};
 
 G_END_DECLS
 

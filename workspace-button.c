@@ -22,7 +22,15 @@
 #include "window-menu-item.h"
 #include <glib/gi18n.h>
 
+enum
+{
+  PROP_0,
+  PROP_WORKSPACE
+};
+
 static GtkWidget* menu = NULL;
+
+G_DEFINE_TYPE (WorkspaceButton, workspace_button, GTK_TYPE_TOGGLE_BUTTON);
 
 static void
 select_cb (GtkItem * item,
@@ -108,16 +116,64 @@ button_toggled_cb (GtkToggleButton* button,
     }
 }
 
+static void
+workspace_button_init (WorkspaceButton* self)
+{
+#if 0
+#endif
+}
+
+static void
+get_property ()
+{
+  g_warning ("%s(%s): FIXME: unimplemented", G_STRFUNC, G_STRLOC);
+}
+
+static void
+set_property (GObject     * object,
+              guint         prop_id,
+              GValue const* value,
+              GParamSpec  * pspec)
+{
+  switch (prop_id)
+    {
+      GtkWidget* label;
+    case PROP_WORKSPACE:
+      /* FIXME: update to renames */
+      label = gtk_label_new (wnck_workspace_get_name (g_value_get_object (value)));
+      gtk_widget_show (label);
+      gtk_container_add (GTK_CONTAINER (object), label);
+
+      /* FIXME: add private data field and use the class handler */
+      g_signal_connect (object, "toggled",
+                        G_CALLBACK (button_toggled_cb), g_value_get_object (value));
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+static void
+workspace_button_class_init (WorkspaceButtonClass* self_class)
+{
+  GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+
+  object_class->get_property = get_property;
+  object_class->set_property = set_property;
+
+  g_object_class_install_property (object_class, PROP_WORKSPACE,
+                                   g_param_spec_object ("workspace", NULL, NULL,
+                                                        WNCK_TYPE_WORKSPACE,
+                                                        G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+}
+
 GtkWidget*
 workspace_button_new (WnckWorkspace* workspace)
 {
-  GtkWidget* button = gtk_toggle_button_new_with_label (wnck_workspace_get_name (workspace));
-  /* FIXME: update to renames */
-
-  g_signal_connect (button, "toggled",
-                    G_CALLBACK (button_toggled_cb), workspace);
-
-  return button;
+  return g_object_new (WORKSPACE_TYPE_BUTTON,
+                       "workspace", workspace,
+                       NULL);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
