@@ -26,7 +26,14 @@ workspace_created_cb (WnckScreen   * screen,
                       WnckWorkspace* workspace,
                       gpointer       user_data)
 {
-  g_print ("created\n");
+  GtkWidget* button = gtk_button_new_with_label (wnck_workspace_get_name (workspace));
+  /* FIXME: update to renames */
+
+  gtk_widget_show (button);
+  gtk_box_pack_start (user_data, button,
+                      FALSE, FALSE, 0);
+  gtk_box_reorder_child (user_data, button,
+                         wnck_workspace_get_number (workspace));
 }
 
 static void
@@ -34,7 +41,15 @@ workspace_destroyed_cb (WnckScreen   * screen,
                         WnckWorkspace* workspace,
                         gpointer       user_data)
 {
-  g_print ("destroyed\n");
+  GList    * children;
+  GtkWidget* button;
+
+  children = gtk_container_get_children (user_data);
+  button   = g_list_nth_data (children, wnck_workspace_get_number (workspace));
+
+  gtk_container_remove (user_data, button);
+
+  g_list_free (children);
 }
 
 int
@@ -42,20 +57,25 @@ main (int   argc,
       char**argv)
 {
   WnckScreen* screen;
+  GtkWidget * box;
   GtkWidget * window;
 
   gtk_init (&argc, &argv);
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  box    = gtk_hbox_new (TRUE, 0);
+
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
+
+  gtk_container_add (GTK_CONTAINER (window), box);
   gtk_widget_show_all (window);
 
   screen = wnck_screen_get_default ();
   g_signal_connect (screen, "workspace-created",
-                    G_CALLBACK (workspace_created_cb), NULL);
+                    G_CALLBACK (workspace_created_cb), box);
   g_signal_connect (screen, "workspace-destroyed",
-                    G_CALLBACK (workspace_destroyed_cb), NULL);
+                    G_CALLBACK (workspace_destroyed_cb), box);
 
   gtk_main ();
   return 0;
