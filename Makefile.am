@@ -4,6 +4,8 @@ workspace_applet_CPPFLAGS=$(WA_CFLAGS)
 workspace_applet_LDADD=$(WA_LIBS)
 workspace_applet_SOURCES=\
 	main.c \
+	window-menu-item.c \
+	window-menu-item.h \
 	workspace-browser.c \
 	workspace-browser.h \
 	$(NULL)
