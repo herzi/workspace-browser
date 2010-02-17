@@ -19,115 +19,24 @@
  */
 
 #include "workspace-browser.h"
-#include "window-menu-item.h"
-#include <glib/gi18n.h>
+#include "workspace-button.h"
 
 #define WA_WORKSPACE "WorkspaceApplet::Workspace"
 
 G_DEFINE_TYPE (WorkspaceBrowser, workspace_browser, GTK_TYPE_HBOX);
-
-static GtkWidget* menu = NULL;
-
-static void
-select_cb (GtkItem * item,
-           gpointer  user_data)
-{
-  gchar* text = g_strdup_printf (_("%s (rename)"),
-                                 wnck_workspace_get_name (user_data));
-  gtk_menu_item_set_label (GTK_MENU_ITEM (item), text);
-  g_free (text);
-}
-
-static void
-unselect_cb (GtkItem * item,
-             gpointer  user_data)
-{
-  gtk_menu_item_set_label (GTK_MENU_ITEM (item),
-                           wnck_workspace_get_name (user_data));
-}
-
-static void
-untoggle (GtkWidget* widget,
-          gpointer   user_data)
-{
-  gtk_toggle_button_set_active (user_data, FALSE);
-
-  gtk_widget_destroy (widget);
-  g_object_unref (widget);
-  menu = NULL;
-}
-
-static void
-button_toggled_cb (GtkToggleButton* button,
-                   gpointer         user_data)
-{
-  if (gtk_toggle_button_get_active (button))
-    {
-      GtkWidget* item = NULL;
-      GList    * window;
-
-      g_return_if_fail (!menu);
-
-      menu = g_object_ref_sink (gtk_menu_new ());
-      item = gtk_menu_item_new_with_label (wnck_workspace_get_name (user_data));
-      gtk_widget_set_sensitive (item, FALSE);
-      g_signal_connect (item, "select",
-                        G_CALLBACK (select_cb), user_data);
-      g_signal_connect (item, "deselect",
-                        G_CALLBACK (unselect_cb), user_data);
-      gtk_widget_show (item);
-      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-
-      item = gtk_separator_menu_item_new ();
-      gtk_widget_show (item);
-      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-
-      for (window = wnck_screen_get_windows (wnck_workspace_get_screen (user_data)); window; window = window->next)
-        {
-          if (!wnck_window_is_on_workspace (window->data, user_data) ||
-              (wnck_window_get_state (window->data) & WNCK_WINDOW_STATE_SKIP_PAGER))
-            {
-              continue;
-            }
-
-          item = window_menu_item_new (window->data);
-          gtk_widget_show (item);
-          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-        }
-
-      gtk_menu_attach_to_widget (GTK_MENU (menu),
-                                 GTK_WIDGET (button),
-                                 NULL);
-
-      gtk_menu_popup (GTK_MENU (menu),
-                      NULL, NULL,
-                      NULL,
-                      NULL,
-                      0, gtk_get_current_event_time ());
-
-      g_object_add_weak_pointer (G_OBJECT (menu), (gpointer*)&menu);
-
-      g_signal_connect (menu, "selection-done",
-                        G_CALLBACK (untoggle), button);
-    }
-}
 
 static void
 workspace_created_cb (WnckScreen   * screen,
                       WnckWorkspace* workspace,
                       gpointer       user_data)
 {
-  GtkWidget* button = gtk_toggle_button_new_with_label (wnck_workspace_get_name (workspace));
-  /* FIXME: update to renames */
+  GtkWidget* button = workspace_button_new (workspace);
 
   gtk_widget_show (button);
   gtk_box_pack_start (user_data, button,
                       FALSE, FALSE, 0);
   gtk_box_reorder_child (user_data, button,
                          wnck_workspace_get_number (workspace));
-
-  g_signal_connect (button, "toggled",
-                    G_CALLBACK (button_toggled_cb), workspace);
 }
 
 static void

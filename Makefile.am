@@ -8,4 +8,6 @@ workspace_applet_SOURCES=\
 	window-menu-item.h \
 	workspace-browser.c \
 	workspace-browser.h \
+	workspace-button.c \
+	workspace-button.h \
 	$(NULL)
