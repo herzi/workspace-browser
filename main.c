@@ -25,7 +25,7 @@
 
 static GtkWidget* menu = NULL;
 
-static gboolean
+static void
 untoggle (GtkWidget* widget,
           gpointer   user_data)
 {
@@ -34,8 +34,6 @@ untoggle (GtkWidget* widget,
   gtk_widget_destroy (widget);
   g_object_unref (widget);
   menu = NULL;
-
-  return FALSE;
 }
 
 static void
@@ -45,6 +43,7 @@ button_toggled_cb (GtkToggleButton* button,
   if (gtk_toggle_button_get_active (button))
     {
       GtkWidget* item = NULL;
+      GList    * window;
 
       g_return_if_fail (!menu);
 
@@ -52,8 +51,26 @@ button_toggled_cb (GtkToggleButton* button,
       item = gtk_menu_item_new_with_label (wnck_workspace_get_name (user_data));
       gtk_widget_set_sensitive (item, FALSE);
       gtk_widget_show (item);
-
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+      item = gtk_separator_menu_item_new ();
+      gtk_widget_show (item);
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+      for (window = wnck_screen_get_windows (wnck_workspace_get_screen (user_data)); window; window = window->next)
+        {
+          if (!wnck_window_is_on_workspace (window->data, user_data))
+            {
+              continue;
+            }
+
+          item = gtk_image_menu_item_new ();
+          gtk_menu_item_set_label (GTK_MENU_ITEM (item),
+                                   wnck_window_get_name (window->data));
+
+          gtk_widget_show (item);
+          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+        }
 
       gtk_menu_attach_to_widget (GTK_MENU (menu),
                                  GTK_WIDGET (button),
