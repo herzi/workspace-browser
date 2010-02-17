@@ -19,12 +19,30 @@
  */
 
 #include <gtk/gtk.h>
+#include <libwnck/libwnck.h>
+
+static void
+workspace_created_cb (WnckScreen   * screen,
+                      WnckWorkspace* workspace,
+                      gpointer       user_data)
+{
+  g_print ("created\n");
+}
+
+static void
+workspace_destroyed_cb (WnckScreen   * screen,
+                        WnckWorkspace* workspace,
+                        gpointer       user_data)
+{
+  g_print ("destroyed\n");
+}
 
 int
 main (int   argc,
       char**argv)
 {
-  GtkWidget* window;
+  WnckScreen* screen;
+  GtkWidget * window;
 
   gtk_init (&argc, &argv);
 
@@ -32,6 +50,12 @@ main (int   argc,
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
   gtk_widget_show_all (window);
+
+  screen = wnck_screen_get_default ();
+  g_signal_connect (screen, "workspace-created",
+                    G_CALLBACK (workspace_created_cb), NULL);
+  g_signal_connect (screen, "workspace-destroyed",
+                    G_CALLBACK (workspace_destroyed_cb), NULL);
 
   gtk_main ();
   return 0;
