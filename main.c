@@ -57,6 +57,27 @@ untoggle (GtkWidget* widget,
 }
 
 static void
+window_item_activated (GtkWidget * widget,
+                       WnckWindow* window)
+{
+  WnckWorkspace* workspace = wnck_window_get_workspace (window);
+
+  if (workspace && wnck_screen_get_active_workspace (wnck_window_get_screen (window)) != workspace)
+    {
+      wnck_workspace_activate (workspace, gtk_get_current_event_time ());
+    }
+
+  if (wnck_screen_get_active_window (wnck_window_get_screen (window)) == window)
+    {
+      wnck_window_minimize (window);
+    }
+  else
+    {
+      wnck_window_activate_transient (window, gtk_get_current_event_time ());
+    }
+}
+
+static void
 button_toggled_cb (GtkToggleButton* button,
                    gpointer         user_data)
 {
@@ -92,6 +113,8 @@ button_toggled_cb (GtkToggleButton* button,
           item = gtk_image_menu_item_new ();
           gtk_menu_item_set_label (GTK_MENU_ITEM (item),
                                    wnck_window_get_name (window->data));
+          g_signal_connect (item, "activate",
+                            G_CALLBACK (window_item_activated), window->data);
 
           gtk_widget_show (item);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
