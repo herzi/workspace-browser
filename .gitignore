@@ -9,6 +9,7 @@ INSTALL
 install-sh
 Makefile
 Makefile.in
+menu-test
 missing
 *.o
 workspace-applet
