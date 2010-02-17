@@ -69,8 +69,7 @@ untoggle (GtkWidget* widget,
 }
 
 static void
-button_toggled_cb (GtkToggleButton* button,
-                   gpointer         user_data)
+button_toggled_cb (GtkToggleButton* button)
 {
   if (gtk_toggle_button_get_active (button))
     {
@@ -80,12 +79,12 @@ button_toggled_cb (GtkToggleButton* button,
       g_return_if_fail (!menu);
 
       menu = g_object_ref_sink (gtk_menu_new ());
-      item = gtk_menu_item_new_with_label (wnck_workspace_get_name (user_data));
+      item = gtk_menu_item_new_with_label (wnck_workspace_get_name (PRIV (button)->workspace));
       gtk_widget_set_sensitive (item, FALSE);
       g_signal_connect (item, "select",
-                        G_CALLBACK (select_cb), user_data);
+                        G_CALLBACK (select_cb), PRIV (button)->workspace);
       g_signal_connect (item, "deselect",
-                        G_CALLBACK (unselect_cb), user_data);
+                        G_CALLBACK (unselect_cb), PRIV (button)->workspace);
       gtk_widget_show (item);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
@@ -93,9 +92,9 @@ button_toggled_cb (GtkToggleButton* button,
       gtk_widget_show (item);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
-      for (window = wnck_screen_get_windows (wnck_workspace_get_screen (user_data)); window; window = window->next)
+      for (window = wnck_screen_get_windows (wnck_workspace_get_screen (PRIV (button)->workspace)); window; window = window->next)
         {
-          if (!wnck_window_is_on_workspace (window->data, user_data) ||
+          if (!wnck_window_is_on_workspace (window->data, PRIV (button)->workspace) ||
               (wnck_window_get_state (window->data) & WNCK_WINDOW_STATE_SKIP_PAGER))
             {
               continue;
@@ -148,13 +147,10 @@ set_property (GObject     * object,
       /* FIXME: update to renames */
       g_return_if_fail (!PRIV (object)->workspace);
       PRIV (object)->workspace = g_value_get_object (value);
+      /* FIXME: create label in init */
       label = gtk_label_new (wnck_workspace_get_name (PRIV (object)->workspace));
       gtk_widget_show (label);
       gtk_container_add (GTK_CONTAINER (object), label);
-
-      /* FIXME: use the class handler */
-      g_signal_connect (object, "toggled",
-                        G_CALLBACK (button_toggled_cb), PRIV (object)->workspace);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -165,7 +161,8 @@ set_property (GObject     * object,
 static void
 workspace_button_class_init (WorkspaceButtonClass* self_class)
 {
-  GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+  GObjectClass        * object_class = G_OBJECT_CLASS (self_class);
+  GtkToggleButtonClass* toggle_class = GTK_TOGGLE_BUTTON_CLASS (self_class);
 
   object_class->get_property = get_property;
   object_class->set_property = set_property;
@@ -174,6 +171,8 @@ workspace_button_class_init (WorkspaceButtonClass* self_class)
                                    g_param_spec_object ("workspace", NULL, NULL,
                                                         WNCK_TYPE_WORKSPACE,
                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+  toggle_class->toggled = button_toggled_cb;
 
   g_type_class_add_private (self_class, sizeof (WorkspaceButtonPrivate));
 }
