@@ -21,9 +21,29 @@
 #include <gtk/gtk.h>
 #include <libwnck/libwnck.h>
 
+#include <glib/gi18n.h>
+
 #define WA_WORKSPACE "WorkspaceApplet::Workspace"
 
 static GtkWidget* menu = NULL;
+
+static void
+select_cb (GtkItem * item,
+           gpointer  user_data)
+{
+  gchar* text = g_strdup_printf (_("%s (rename)"),
+                                 wnck_workspace_get_name (user_data));
+  gtk_menu_item_set_label (GTK_MENU_ITEM (item), text);
+  g_free (text);
+}
+
+static void
+unselect_cb (GtkItem * item,
+             gpointer  user_data)
+{
+  gtk_menu_item_set_label (GTK_MENU_ITEM (item),
+                           wnck_workspace_get_name (user_data));
+}
 
 static void
 untoggle (GtkWidget* widget,
@@ -50,6 +70,10 @@ button_toggled_cb (GtkToggleButton* button,
       menu = g_object_ref_sink (gtk_menu_new ());
       item = gtk_menu_item_new_with_label (wnck_workspace_get_name (user_data));
       gtk_widget_set_sensitive (item, FALSE);
+      g_signal_connect (item, "select",
+                        G_CALLBACK (select_cb), user_data);
+      g_signal_connect (item, "deselect",
+                        G_CALLBACK (unselect_cb), user_data);
       gtk_widget_show (item);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
@@ -59,7 +83,8 @@ button_toggled_cb (GtkToggleButton* button,
 
       for (window = wnck_screen_get_windows (wnck_workspace_get_screen (user_data)); window; window = window->next)
         {
-          if (!wnck_window_is_on_workspace (window->data, user_data))
+          if (!wnck_window_is_on_workspace (window->data, user_data) ||
+              (wnck_window_get_state (window->data) & WNCK_WINDOW_STATE_SKIP_PAGER))
             {
               continue;
             }
