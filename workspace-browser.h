@@ -18,28 +18,17 @@
  * USA
  */
 
+#ifndef WORKSPACE_BROWSER_H
+#define WORKSPACE_BROWSER_H
+
 #include <gtk/gtk.h>
 
-int
-main (int   argc,
-      char**argv)
-{
-  GtkWidget * box;
-  GtkWidget * window;
+G_BEGIN_DECLS
 
-  gtk_init (&argc, &argv);
+GtkWidget* workspace_browser_new (void);
 
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  box    = workspace_browser_new ();
+G_END_DECLS
 
-  g_signal_connect (window, "destroy",
-                    G_CALLBACK (gtk_main_quit), NULL);
-
-  gtk_container_add (GTK_CONTAINER (window), box);
-  gtk_widget_show_all (window);
-
-  gtk_main ();
-  return 0;
-}
+#endif /* !WORKSPACE_BROWSER_H */
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
