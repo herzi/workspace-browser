@@ -21,6 +21,57 @@
 #include <gtk/gtk.h>
 #include <libwnck/libwnck.h>
 
+#define WA_WORKSPACE "WorkspaceApplet::Workspace"
+
+static GtkWidget* menu = NULL;
+
+static gboolean
+untoggle (GtkWidget* widget,
+          gpointer   user_data)
+{
+  gtk_toggle_button_set_active (user_data, FALSE);
+
+  gtk_widget_destroy (widget);
+  g_object_unref (widget);
+  menu = NULL;
+
+  return FALSE;
+}
+
+static void
+button_toggled_cb (GtkToggleButton* button,
+                   gpointer         user_data)
+{
+  if (gtk_toggle_button_get_active (button))
+    {
+      GtkWidget* item = NULL;
+
+      g_return_if_fail (!menu);
+
+      menu = g_object_ref_sink (gtk_menu_new ());
+      item = gtk_menu_item_new_with_label (wnck_workspace_get_name (user_data));
+      gtk_widget_set_sensitive (item, FALSE);
+      gtk_widget_show (item);
+
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+      gtk_menu_attach_to_widget (GTK_MENU (menu),
+                                 GTK_WIDGET (button),
+                                 NULL);
+
+      gtk_menu_popup (GTK_MENU (menu),
+                      NULL, NULL,
+                      NULL,
+                      NULL,
+                      0, gtk_get_current_event_time ());
+
+      g_object_add_weak_pointer (G_OBJECT (menu), (gpointer*)&menu);
+
+      g_signal_connect (menu, "selection-done",
+                        G_CALLBACK (untoggle), button);
+    }
+}
+
 static void
 workspace_created_cb (WnckScreen   * screen,
                       WnckWorkspace* workspace,
@@ -34,6 +85,9 @@ workspace_created_cb (WnckScreen   * screen,
                       FALSE, FALSE, 0);
   gtk_box_reorder_child (user_data, button,
                          wnck_workspace_get_number (workspace));
+
+  g_signal_connect (button, "toggled",
+                    G_CALLBACK (button_toggled_cb), workspace);
 }
 
 static void
