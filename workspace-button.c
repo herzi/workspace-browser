@@ -24,6 +24,7 @@
 
 struct _WorkspaceButtonPrivate
 {
+  GtkWidget* label;
   WnckWorkspace* workspace;
 };
 
@@ -126,6 +127,9 @@ static void
 workspace_button_init (WorkspaceButton* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, WORKSPACE_TYPE_BUTTON, WorkspaceButtonPrivate);
+  PRIV (self)->label = gtk_label_new (NULL);
+  gtk_widget_show (PRIV (self)->label);
+  gtk_container_add (GTK_CONTAINER (self), PRIV (self)->label);
 }
 
 static void
@@ -142,15 +146,12 @@ set_property (GObject     * object,
 {
   switch (prop_id)
     {
-      GtkWidget* label;
     case PROP_WORKSPACE:
       /* FIXME: update to renames */
       g_return_if_fail (!PRIV (object)->workspace);
       PRIV (object)->workspace = g_value_get_object (value);
-      /* FIXME: create label in init */
-      label = gtk_label_new (wnck_workspace_get_name (PRIV (object)->workspace));
-      gtk_widget_show (label);
-      gtk_container_add (GTK_CONTAINER (object), label);
+      gtk_label_set_text (GTK_LABEL (PRIV (object)->label),
+                          wnck_workspace_get_name (PRIV (object)->workspace));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
