@@ -3,6 +3,8 @@ aclocal.m4
 config.log
 config.status
 configure
+depcomp
+.deps
 INSTALL
 install-sh
 Makefile
