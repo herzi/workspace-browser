@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+<?xml version="1.0" charset="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -52,17 +52,71 @@
       Browser Workspaces, Applications and Windows easily…
     </div>
 
-    <p>main project text</p><h2>Dependencies</h2>
-<p>dependencies</p>
-<h2>Install</h2>
-<p>installation instructions</p>
-<h2>License</h2>
-<p>LGPL 2.1+</p>
-<h2>Authors</h2>
-<p>Sven Herzberg<br/><br/>      </p>
-<h2>Contact</h2>
-<p>Sven Herzberg</p>
+    <p>
+        Workspace Browser will provide you with a very intuitive user interface to manage
+        Workspaces, Applications and Windows on your Desktop.
+    </p>
 
+    <h2>Dependencies</h2>
+    <ul>
+        <li><a href="http://www.gtk.org/">GTK+</a></li>
+        <li><a href="http://library.gnome.org/devel/panel-applet/stable/">libpanelapplet</a></li>
+    </ul>
+
+    <h2>Install</h2>
+    <p>
+        We have prepared very easy ways of installing <i>workspace-browser</i> on these distrubutions:
+    </p>
+    <ol>
+        <li>Fedora 12<ol>
+            <li><a href="http://download.opensuse.org/repositories/home:/herzi/Fedora_12/home:herzi.repo">Install Package Repository</a> (will provide you with updates for workspace-browser as well)</li>
+            <li>Install the package called &quot;workspace-browser&quot;</li>
+        </ol></li>
+    </ol>
+    <p>
+        If your distribution is not listed there, please check out one of these options:
+    </p>
+    <ol>
+        <li>
+            Ask us for packages (as long as the OpenSuse Build Service supports your distribution,
+            this is easy for us).
+        </li>
+        <li>
+            Build the package on your own. This includes the classical three-step compilation:
+            <ol>
+                <li>
+                    tar xzf workspace-browser-&lt;version&gt;.tar.gz
+                </li>
+                <li>
+                    cd workspace-browser-&lt;version&gt; &amp;&amp; ./configure
+                </li>
+                <li>
+                    make
+                </li>
+                <li>
+                    sudo make install
+                </li>
+            </ol>
+        </li>
+    </ol>
+
+    <h2>Known Issues</h2>
+    <dl>
+        <dt>I cannot see the applet in the list from GNOME Panel. What did I do wrong?</dt>
+        <dd>
+            Usually, nothing. You should just check the prefix of your installation.
+            Default installations of GNOME don't support applets from the /usr/local
+            prefix by default.<br />
+            You can easily enable the location by editing this file:<br />
+            /etc/bonobo-activation/bonobo-activation-config.xml
+        </dd>
+    </dl>
+
+    <h2>License</h2>
+    <p>LGPL 2.1+</p>
+
+    <h2>Authors</h2>
+    <p><a href="http://www.herzi.eu/">Sven Herzberg</a></p>
 
     <h2>Download</h2>
     <p>
@@ -84,3 +138,4 @@
   
 </body>
 </html>
+<!-- vim:set et sw=4: -->
