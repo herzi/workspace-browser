@@ -40,6 +40,7 @@ static GtkWidget* menu = NULL;
 
 G_DEFINE_TYPE (WorkspaceButton, workspace_button, GTK_TYPE_TOGGLE_BUTTON);
 
+#if 0
 static void
 select_cb (GtkItem * item,
            gpointer  user_data)
@@ -57,6 +58,7 @@ unselect_cb (GtkItem * item,
   gtk_menu_item_set_label (GTK_MENU_ITEM (item),
                            wnck_workspace_get_name (user_data));
 }
+#endif
 
 static void
 untoggle (GtkWidget* widget,
@@ -82,10 +84,12 @@ button_toggled_cb (GtkToggleButton* button)
       menu = g_object_ref_sink (gtk_menu_new ());
       item = gtk_menu_item_new_with_label (wnck_workspace_get_name (PRIV (button)->workspace));
       gtk_widget_set_sensitive (item, FALSE);
+#if 0
       g_signal_connect (item, "select",
                         G_CALLBACK (select_cb), PRIV (button)->workspace);
       g_signal_connect (item, "deselect",
                         G_CALLBACK (unselect_cb), PRIV (button)->workspace);
+#endif
       gtk_widget_show (item);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
