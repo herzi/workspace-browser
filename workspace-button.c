@@ -94,6 +94,7 @@ menu_position_func (GtkMenu * menu,
                               &allocation.x, &allocation.y);
 
   monitor = gdk_screen_get_monitor_at_window (screen, GTK_WIDGET (user_data)->window);
+  gtk_menu_set_monitor (menu, monitor);
   gdk_screen_get_monitor_geometry (screen, monitor, &monitor_geometry);
 
   if (allocation.y >= monitor_geometry.y &&
@@ -112,9 +113,20 @@ menu_position_func (GtkMenu * menu,
       *y = allocation.y;
     }
 
-  *x = allocation.x;
-
-  //gtk_menu_set_monitor (menu, monitor);
+  switch (gtk_widget_get_direction (user_data))
+    {
+    case GTK_TEXT_DIR_RTL:
+      *x = allocation.x + allocation.width - requisition.width;
+      break;
+    case GTK_TEXT_DIR_LTR:
+    case GTK_TEXT_DIR_NONE:
+      *x = allocation.x;
+      break;
+    default:
+      g_warn_if_reached ();
+      *x = allocation.x;
+      break;
+    }
 }
 
 static void
@@ -129,7 +141,7 @@ button_toggled_cb (GtkToggleButton* button)
 
       menu = g_object_ref_sink (gtk_menu_new ());
       item = gtk_menu_item_new_with_label (wnck_workspace_get_name (PRIV (button)->workspace));
-      //gtk_widget_set_sensitive (item, FALSE);
+      gtk_widget_set_sensitive (item, FALSE);
 #if 0
       g_signal_connect (item, "select",
                         G_CALLBACK (select_cb), PRIV (button)->workspace);
