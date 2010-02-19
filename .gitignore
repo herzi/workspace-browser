@@ -1,4 +1,5 @@
 aclocal.m4
+applet.h
 *autom4te*
 config.guess
 config.log

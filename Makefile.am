@@ -9,11 +9,23 @@ nodist_server_DATA = $(server_in_file:.in=)
 %.server: %.server.in Makefile
 	sed 's$$@LIBEXECDIR@$$$(libexecdir)$$' $< > $@
 
+applet.h: .git/
+	echo "#define REVISION \"`git describe --tags`\"" > $@.new
+	cmp -s $@ $@.new && rm -f $@.new || mv $@.new $@
+
 workspace_browser_applet_CPPFLAGS=$(WA_CFLAGS)
 workspace_browser_applet_LDADD=$(WA_LIBS)
 workspace_browser_applet_SOURCES=\
 	applet.c \
 	$(NULL)
+nodist_workspace_browser_applet_SOURCES=\
+	applet.h \
+	$(NULL)
+
+BUILT_SOURCES=\
+	$(nodist_workspace_browser_applet_SOURCES) \
+	$(NULL)
+CLEANFILES=$(BUILT_SOURCES) $(nodist_server_DATA)
 
 workspace_browser_CPPFLAGS=$(libworkspace_la_CPPFLAGS)
 workspace_browser_LDADD=libworkspace.la $(libworkspace_la_LIBADD)

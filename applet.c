@@ -3,6 +3,8 @@
 #include <panel-applet.h>
 #include <gtk/gtklabel.h>
 
+#include "applet.h"
+
 static gboolean
 hello_applet_fill (PanelApplet *applet,
                    const gchar *iid,
@@ -14,6 +16,7 @@ hello_applet_fill (PanelApplet *applet,
                 return FALSE;
 
         label = gtk_label_new ("Hello World");
+        gtk_widget_set_tooltip_text (label, REVISION);
         gtk_container_add (GTK_CONTAINER (applet), label);
 
         gtk_widget_show_all (GTK_WIDGET (applet));
