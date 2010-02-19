@@ -20,6 +20,51 @@
 
 #include <gtk/gtk.h>
 
+static void
+append_menu_item (GtkMenu    * menu,
+                  gchar const* category,
+                  gchar const* icon_name,
+                  gchar const* window_title)
+{
+  static GtkSizeGroup* categories = NULL;
+
+  GtkWidget* widget = gtk_menu_item_new ();
+  GtkWidget* hbox = gtk_hbox_new (FALSE, 6);
+
+  if (!categories)
+    {
+      categories = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+    }
+
+  GtkWidget* category_label = gtk_label_new (category);
+  gtk_misc_set_alignment (GTK_MISC (category_label), 1.0, 0.5);
+
+  gtk_box_pack_start (GTK_BOX (hbox), category_label,
+                      FALSE, FALSE, 0);
+
+  gtk_size_group_add_widget (categories, category_label);
+
+  gtk_box_pack_start (GTK_BOX (hbox), gtk_vseparator_new (),
+                      FALSE, FALSE, 0);
+
+  if (icon_name)
+    {
+      GtkWidget* icon = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU);
+
+      gtk_box_pack_start (GTK_BOX (hbox), icon,
+                          FALSE, FALSE, 0);
+    }
+
+  category_label = gtk_label_new (window_title);
+  gtk_box_pack_start (GTK_BOX (hbox), category_label,
+                      FALSE, FALSE, 0);
+
+  gtk_widget_show_all (hbox);
+  gtk_container_add (GTK_CONTAINER (widget), hbox);
+
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), widget);
+}
+
 int
 main (int   argc,
       char**argv)
@@ -29,7 +74,15 @@ main (int   argc,
   gtk_init (&argc, &argv);
 
   menu = gtk_menu_new ();
+  append_menu_item (GTK_MENU (menu), "Internet",   "empathy",  "Empathy - Buddy List");
+  append_menu_item (GTK_MENU (menu), NULL,         "firefox",  "Blog Tutorial - Mozilla Firefox");
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_separator_menu_item_new ());
+  append_menu_item (GTK_MENU (menu), "System",     "nautilus", "herzi - File Browser");
+  append_menu_item (GTK_MENU (menu), NULL,         "gnome-terminal", "herzi@boober:~/Hacking/Desktop/workspace-applet");
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_separator_menu_item_new ());
+  append_menu_item (GTK_MENU (menu), "Multimedia", "rhythmbox", "Music Player");
 
+  gtk_widget_show_all (menu);
   gtk_menu_popup (GTK_MENU (menu),
                   NULL, NULL,
                   NULL, NULL,
