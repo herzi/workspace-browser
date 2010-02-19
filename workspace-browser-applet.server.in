@@ -1,6 +1,6 @@
 <oaf_info>
 <oaf_server iid="OAFIID:My_HelloApplet_Factory" type="exe"
-            location="@LIBEXECDIR@/test-bonobo-applet">
+            location="@LIBEXECDIR@/workspace-browser-applet">
 
         <oaf_attribute name="repo_ids" type="stringv">
                 <item value="IDL:Bonobo/GenericFactory:1.0"/>

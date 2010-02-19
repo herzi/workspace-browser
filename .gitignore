@@ -20,6 +20,5 @@ menu-test
 missing
 *.o
 *.server
-test-bonobo-applet
-workspace-applet
 workspace-browser
+workspace-browser-applet
