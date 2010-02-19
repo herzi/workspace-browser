@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "workspace-browser.h"
 
 int
 main (int   argc,
