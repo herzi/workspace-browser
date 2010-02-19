@@ -72,6 +72,47 @@ untoggle (GtkWidget* widget,
 }
 
 static void
+menu_position_func (GtkMenu * menu,
+                    gint    * x,
+                    gint    * y,
+                    gboolean* push_in,
+                    gpointer  user_data)
+{
+  GtkRequisition  requisition;
+  GtkAllocation   allocation;
+  GdkRectangle    monitor_geometry;
+  GdkScreen     * screen;
+  int             monitor;
+
+  screen = gtk_widget_get_screen (GTK_WIDGET (menu));
+
+  gtk_widget_get_allocation (user_data, &allocation);
+  gtk_widget_size_request (GTK_WIDGET (menu), &requisition);
+
+  gdk_window_get_root_coords (gtk_widget_get_parent_window (user_data),
+                              allocation.x, allocation.y,
+                              &allocation.x, &allocation.y);
+
+  monitor = gdk_screen_get_monitor_at_window (screen, GTK_WIDGET (user_data)->window);
+  gdk_screen_get_monitor_geometry (screen, monitor, &monitor_geometry);
+
+  if (allocation.y >= monitor_geometry.y &&
+      allocation.y + allocation.height + requisition.height <= monitor_geometry.y + monitor_geometry.height)
+    {
+      *y = allocation.y + allocation.height;
+    }
+  else
+    {
+      g_warning ("implement menu-on-top");
+      *y = allocation.y;
+    }
+
+  *x = allocation.x;
+
+  //gtk_menu_set_monitor (menu, monitor);
+}
+
+static void
 button_toggled_cb (GtkToggleButton* button)
 {
   if (gtk_toggle_button_get_active (button))
@@ -83,7 +124,7 @@ button_toggled_cb (GtkToggleButton* button)
 
       menu = g_object_ref_sink (gtk_menu_new ());
       item = gtk_menu_item_new_with_label (wnck_workspace_get_name (PRIV (button)->workspace));
-      gtk_widget_set_sensitive (item, FALSE);
+      //gtk_widget_set_sensitive (item, FALSE);
 #if 0
       g_signal_connect (item, "select",
                         G_CALLBACK (select_cb), PRIV (button)->workspace);
@@ -114,10 +155,11 @@ button_toggled_cb (GtkToggleButton* button)
                                  GTK_WIDGET (button),
                                  NULL);
 
+      gtk_menu_set_screen (GTK_MENU (menu),
+                           gtk_widget_get_screen (GTK_WIDGET (button)));
       gtk_menu_popup (GTK_MENU (menu),
                       NULL, NULL,
-                      NULL,
-                      NULL,
+                      menu_position_func, button,
                       0, gtk_get_current_event_time ());
 
       g_object_add_weak_pointer (G_OBJECT (menu), (gpointer*)&menu);
