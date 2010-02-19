@@ -14,7 +14,7 @@ applet.h: .git/
 	cmp -s $@ $@.new && rm -f $@.new || mv $@.new $@
 
 workspace_browser_applet_CPPFLAGS=$(WA_CFLAGS)
-workspace_browser_applet_LDADD=$(WA_LIBS)
+workspace_browser_applet_LDADD=libworkspace.la $(libworkspace_la_LIBADD)
 workspace_browser_applet_SOURCES=\
 	applet.c \
 	$(NULL)
