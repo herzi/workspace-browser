@@ -6,10 +6,12 @@ serverdir = $(libdir)/bonobo/servers
 server_in_file = workspace-browser-applet.server.in
 nodist_server_DATA = $(server_in_file:.in=)
 
+EXTRA_DIST=$(server_in_file)
+
 %.server: %.server.in Makefile
 	sed 's$$@LIBEXECDIR@$$$(libexecdir)$$' $< > $@
 
-applet.h: .git/
+applet.h: $(wildcard .git/)
 	echo "#define REVISION \"`git describe --tags`\"" > $@.new
 	cmp -s $@ $@.new && rm -f $@.new || mv $@.new $@
 
