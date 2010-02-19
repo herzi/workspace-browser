@@ -101,9 +101,14 @@ menu_position_func (GtkMenu * menu,
     {
       *y = allocation.y + allocation.height;
     }
+  else if (allocation.y - requisition.height >= monitor_geometry.y &&
+           allocation.y <= monitor_geometry.y + monitor_geometry.height)
+    {
+      *y = allocation.y - requisition.height;
+    }
   else
     {
-      g_warning ("implement menu-on-top");
+      g_warning ("implement menu somewhere else");
       *y = allocation.y;
     }
 
