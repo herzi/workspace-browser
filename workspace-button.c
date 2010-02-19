@@ -132,6 +132,7 @@ workspace_button_init (WorkspaceButton* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, WORKSPACE_TYPE_BUTTON, WorkspaceButtonPrivate);
   PRIV (self)->label = gtk_label_new (NULL);
+  gtk_label_set_ellipsize (GTK_LABEL (PRIV (self)->label), PANGO_ELLIPSIZE_MIDDLE);
   gtk_widget_show (PRIV (self)->label);
   gtk_container_add (GTK_CONTAINER (self), PRIV (self)->label);
 }

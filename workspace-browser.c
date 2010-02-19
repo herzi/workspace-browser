@@ -34,7 +34,7 @@ workspace_created_cb (WnckScreen   * screen,
 
   gtk_widget_show (button);
   gtk_box_pack_start (user_data, button,
-                      FALSE, FALSE, 0);
+                      TRUE, TRUE, 0);
   gtk_box_reorder_child (user_data, button,
                          wnck_workspace_get_number (workspace));
 }
