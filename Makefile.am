@@ -1,9 +1,15 @@
+lib_LTLIBRARIES=libworkspace.la
 libexec_PROGRAMS=workspace-applet
 
-workspace_applet_CPPFLAGS=$(WA_CFLAGS)
-workspace_applet_LDADD=$(WA_LIBS)
+workspace_applet_CPPFLAGS=$(libworkspace_la_CPPFLAGS)
+workspace_applet_LDADD=libworkspace.la $(libworkspace_la_LIBADD)
 workspace_applet_SOURCES=\
 	main.c \
+	$(NULL)
+
+libworkspace_la_CPPFLAGS=$(WA_CFLAGS)
+libworkspace_la_LIBADD=$(WA_LIBS)
+libworkspace_la_SOURCES=\
 	window-menu-item.c \
 	window-menu-item.h \
 	workspace-browser.c \
