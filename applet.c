@@ -13,7 +13,7 @@ hello_applet_fill (PanelApplet *applet,
 {
         GtkWidget *label;
 
-        if (strcmp (iid, "OAFIID:My_HelloApplet") != 0)
+        if (strcmp (iid, "OAFIID:Herzis_WorkspaceBrowserApplet") != 0)
                 return FALSE;
 
         panel_applet_set_flags (applet, PANEL_APPLET_HAS_HANDLE);
@@ -28,9 +28,9 @@ hello_applet_fill (PanelApplet *applet,
 }
 
 
-PANEL_APPLET_BONOBO_FACTORY ("OAFIID:My_HelloApplet_Factory",
+PANEL_APPLET_BONOBO_FACTORY ("OAFIID:Herzis_WorkspaceBrowserApplet_Factory",
                              PANEL_TYPE_APPLET,
-                             "TheHelloWorldApplet",
+                             "WorkspaceBrowserApplet",
                              "0",
                              hello_applet_fill,
                              NULL);

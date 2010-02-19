@@ -1,25 +1,25 @@
 <oaf_info>
-<oaf_server iid="OAFIID:My_HelloApplet_Factory" type="exe"
+<oaf_server iid="OAFIID:Herzis_WorkspaceBrowserApplet_Factory" type="exe"
             location="@LIBEXECDIR@/workspace-browser-applet">
 
         <oaf_attribute name="repo_ids" type="stringv">
                 <item value="IDL:Bonobo/GenericFactory:1.0"/>
                 <item value="IDL:Bonobo/Unknown:1.0"/>
         </oaf_attribute>
-        <oaf_attribute name="name" type="string" value="Hello World Applet Factory"/>
-        <oaf_attribute name="description" type="string" value="My first applet factory"/>
+        <oaf_attribute name="name" type="string" value="Workspace Browser Applet Factory"/>
+        <oaf_attribute name="description" type="string" value="Create an Applet to browse Workspaces and Applications the same time&#x2026;"/>
 </oaf_server>
 
-<oaf_server iid="OAFIID:My_HelloApplet" type="factory"
-            location="OAFIID:My_HelloApplet_Factory">
+<oaf_server iid="OAFIID:Herzis_WorkspaceBrowserApplet" type="factory"
+            location="OAFIID:Herzis_WorkspaceBrowserApplet_Factory">
 
         <oaf_attribute name="repo_ids" type="stringv">
                 <item value="IDL:GNOME/Vertigo/PanelAppletShell:1.0"/>
                 <item value="IDL:Bonobo/Control:1.0"/>
                 <item value="IDL:Bonobo/Unknown:1.0"/>
         </oaf_attribute>
-        <oaf_attribute name="name" type="string" value="Hello World Applet"/>
-        <oaf_attribute name="description" type="string" value="My first applet for the GNOME2 panel"/>
-        <oaf_attribute name="panel:icon" type="string" value="gnome-applets.png"/>
+        <oaf_attribute name="name" type="string" value="Workspace Browser Applet"/>
+        <oaf_attribute name="description" type="string" value="Browse Workspaces, Applications and Windows at once&#x2026;"/>
+        <oaf_attribute name="panel:icon" type="string" value="gnome-applets.png"/><!-- FIXME: develop a custom icon -->
 </oaf_server>
 </oaf_info>
