@@ -1,5 +1,19 @@
 lib_LTLIBRARIES=libworkspace.la
-libexec_PROGRAMS=workspace-browser
+bin_PROGRAMS=workspace-browser
+libexec_PROGRAMS=test-bonobo-applet
+
+serverdir = $(libdir)/bonobo/servers
+server_in_file = workspace-browser-applet.server.in
+nodist_server_DATA = $(server_in_file:.in=)
+
+%.server: %.server.in Makefile
+	sed 's$$@LIBEXECDIR@$$$(libexecdir)$$' $< > $@
+
+test_bonobo_applet_CPPFLAGS=$(WA_CFLAGS)
+test_bonobo_applet_LDADD=$(WA_LIBS)
+test_bonobo_applet_SOURCES=\
+	applet.c \
+	$(NULL)
 
 workspace_browser_CPPFLAGS=$(libworkspace_la_CPPFLAGS)
 workspace_browser_LDADD=libworkspace.la $(libworkspace_la_LIBADD)
