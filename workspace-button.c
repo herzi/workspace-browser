@@ -225,11 +225,6 @@ set_active_window (WorkspaceButton* self,
       gtk_label_set_text (GTK_LABEL (PRIV (self)->label),
                           wnck_window_get_name (PRIV (self)->active));
 
-      if (pango_layout_is_ellipsized (gtk_label_get_layout (GTK_LABEL (PRIV (self)->label))))
-        {
-          gtk_widget_set_tooltip_text (PRIV (self)->label,
-                                       wnck_window_get_name (PRIV (self)->active));
-        }
       // FIXME: connect to window state changes
     }
   else

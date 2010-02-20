@@ -27,8 +27,28 @@ wb_label_init (WbLabel* self)
 {}
 
 static void
+size_allocate (GtkWidget    * widget,
+               GtkAllocation* allocation)
+{
+  GTK_WIDGET_CLASS (wb_label_parent_class)->size_allocate (widget, allocation);
+
+  if (pango_layout_is_ellipsized (gtk_label_get_layout (GTK_LABEL (widget))))
+    {
+      gtk_widget_set_tooltip_text (widget, gtk_label_get_text (GTK_LABEL (widget)));
+    }
+  else
+    {
+      gtk_widget_set_tooltip_text (widget, NULL);
+    }
+}
+
+static void
 wb_label_class_init (WbLabelClass* self_class)
-{}
+{
+  GtkWidgetClass* widget_class = GTK_WIDGET_CLASS (self_class);
+
+  widget_class->size_allocate = size_allocate;
+}
 
 GtkWidget*
 wb_label_new (void)
