@@ -24,8 +24,9 @@
 
 struct _WorkspaceButtonPrivate
 {
-  GtkWidget* label;
+  GtkWidget    * label;
   WnckWorkspace* workspace;
+  WnckWindow   * active;
 };
 
 enum
@@ -158,7 +159,7 @@ button_toggled_cb (GtkToggleButton* button)
       for (window = wnck_screen_get_windows (wnck_workspace_get_screen (PRIV (button)->workspace)); window; window = window->next)
         {
           if (!wnck_window_is_on_workspace (window->data, PRIV (button)->workspace) ||
-              (wnck_window_get_state (window->data) & WNCK_WINDOW_STATE_SKIP_PAGER))
+              (wnck_window_get_state (window->data) & WNCK_WINDOW_STATE_SKIP_TASKLIST))
             {
               continue;
             }
@@ -203,6 +204,70 @@ get_property ()
 }
 
 static void
+set_active_window (WorkspaceButton* self,
+                   WnckWindow     * window)
+{
+  if (PRIV (self)->active == window)
+    {
+      return;
+    }
+
+  if (PRIV (self)->active)
+    {
+      PRIV (self)->active = NULL;
+    }
+
+  if (window)
+    {
+      PRIV (self)->active = window;
+
+      gtk_label_set_text (GTK_LABEL (PRIV (self)->label),
+                          wnck_window_get_name (PRIV (self)->active));
+
+      if (pango_layout_is_ellipsized (gtk_label_get_layout (GTK_LABEL (PRIV (self)->label))))
+        {
+          gtk_widget_set_tooltip_text (PRIV (self)->label,
+                                       wnck_window_get_name (PRIV (self)->active));
+        }
+      // FIXME: connect to window state changes
+    }
+  else
+    {
+      gtk_label_set_text (GTK_LABEL (PRIV (self)->label),
+                          wnck_workspace_get_name (PRIV (self)->workspace));
+    }
+}
+
+static void
+active_window_changed (WnckScreen* screen,
+                       WnckWindow* previous,
+                       gpointer    user_data)
+{
+  WorkspaceButton* self = user_data;
+  WnckWindow     * current = wnck_screen_get_active_window (screen);
+
+  if (current && wnck_window_is_on_workspace (current, PRIV (self)->workspace))
+    {
+      set_active_window (self, current);
+    }
+  else if (previous && wnck_window_is_on_workspace (previous, PRIV (self)->workspace))
+    {
+      set_active_window (self, previous);
+    }
+}
+
+static void
+window_closed (WnckScreen* screen,
+               WnckWindow* window,
+               gpointer    user_data)
+{
+  if (window == PRIV (user_data)->active)
+    {
+      set_active_window (user_data, NULL);
+    }
+}
+
+static void
 set_property (GObject     * object,
               guint         prop_id,
               GValue const* value,
@@ -213,9 +278,17 @@ set_property (GObject     * object,
     case PROP_WORKSPACE:
       /* FIXME: update to renames */
       g_return_if_fail (!PRIV (object)->workspace);
+      g_return_if_fail (g_value_get_object (value));
+      g_return_if_fail (G_VALUE_HOLDS (value, WNCK_TYPE_WORKSPACE));
+
       PRIV (object)->workspace = g_value_get_object (value);
       gtk_label_set_text (GTK_LABEL (PRIV (object)->label),
                           wnck_workspace_get_name (PRIV (object)->workspace));
+
+      g_signal_connect (wnck_workspace_get_screen (PRIV (object)->workspace), "active-window-changed",
+                        G_CALLBACK (active_window_changed), object);
+      g_signal_connect (wnck_workspace_get_screen (PRIV (object)->workspace), "window-closed",
+                        G_CALLBACK (window_closed), object);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

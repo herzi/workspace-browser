@@ -20,6 +20,7 @@
 
 #include <gtk/gtk.h>
 #include "workspace-browser.h"
+#include <glib/gi18n.h>
 
 int
 main (int   argc,
@@ -33,6 +34,8 @@ main (int   argc,
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   box    = workspace_browser_new ();
 
+  gtk_window_set_title (GTK_WINDOW (window), _("Workspace Browser"));
+  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (window), TRUE);
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
 
