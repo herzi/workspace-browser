@@ -208,11 +208,6 @@ static void
 set_active_window (WorkspaceButton* self,
                    WnckWindow     * window)
 {
-  if (window && GPOINTER_TO_INT (g_object_get_data (G_OBJECT (window), "WorkspaceButton::closed")))
-    {
-      window = NULL;
-    }
-
   if (PRIV (self)->active == window)
     {
       return;
@@ -247,13 +242,10 @@ active_window_changed (WnckScreen* screen,
   WorkspaceButton* self = user_data;
   WnckWindow     * current = wnck_screen_get_active_window (screen);
 
-  if (current && wnck_window_is_on_workspace (current, PRIV (self)->workspace))
+  if (current && wnck_window_is_on_workspace (current, PRIV (self)->workspace) &&
+      wnck_screen_get_active_workspace (screen) == PRIV (self)->workspace)
     {
       set_active_window (self, current);
-    }
-  else if (previous && wnck_window_is_on_workspace (previous, PRIV (self)->workspace))
-    {
-      set_active_window (self, previous);
     }
 }
 
@@ -264,7 +256,6 @@ window_closed (WnckScreen* screen,
 {
   if (window == PRIV (user_data)->active)
     {
-      g_object_set_data (G_OBJECT (window), "WorkspaceButton::closed", GINT_TO_POINTER (TRUE));
       set_active_window (user_data, NULL);
     }
 }
