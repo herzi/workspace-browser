@@ -25,6 +25,8 @@
 
 struct _WorkspaceButtonPrivate
 {
+  GtkWidget    * box;
+  GtkWidget    * image;
   GtkWidget    * label;
   WnckWorkspace* workspace;
   WnckWindow   * active;
@@ -192,10 +194,18 @@ static void
 workspace_button_init (WorkspaceButton* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, WORKSPACE_TYPE_BUTTON, WorkspaceButtonPrivate);
+  PRIV (self)->box = gtk_hbox_new (FALSE, 6);
+  PRIV (self)->image = gtk_image_new ();
   PRIV (self)->label = wb_label_new ();
   gtk_label_set_ellipsize (GTK_LABEL (PRIV (self)->label), PANGO_ELLIPSIZE_MIDDLE);
   gtk_widget_show (PRIV (self)->label);
-  gtk_container_add (GTK_CONTAINER (self), PRIV (self)->label);
+  gtk_box_pack_start (GTK_BOX (PRIV (self)->box), PRIV (self)->image,
+                      FALSE, FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (PRIV (self)->box), PRIV (self)->label);
+  gtk_widget_show (PRIV (self)->box);
+  gtk_container_add (GTK_CONTAINER (self), PRIV (self)->box);
+
+  gtk_widget_set_name (GTK_WIDGET (self), "workspace-button");
 }
 
 static void
@@ -222,6 +232,9 @@ set_active_window (WorkspaceButton* self,
     {
       PRIV (self)->active = window;
 
+      gtk_image_set_from_pixbuf (GTK_IMAGE (PRIV (self)->image),
+                                 wnck_window_get_mini_icon (PRIV (self)->active));
+      gtk_widget_show (PRIV (self)->image);
       gtk_label_set_text (GTK_LABEL (PRIV (self)->label),
                           wnck_window_get_name (PRIV (self)->active));
 
@@ -229,6 +242,8 @@ set_active_window (WorkspaceButton* self,
     }
   else
     {
+      gtk_widget_hide (PRIV (self)->image);
+      gtk_image_set_from_pixbuf (GTK_IMAGE (PRIV (self)->image), NULL);
       gtk_label_set_text (GTK_LABEL (PRIV (self)->label),
                           wnck_workspace_get_name (PRIV (self)->workspace));
     }

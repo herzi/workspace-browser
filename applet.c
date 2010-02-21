@@ -12,6 +12,14 @@ hello_applet_fill (PanelApplet *applet,
 {
   GtkWidget *label;
 
+  gtk_rc_parse_string ("style \"workspace-browser-applet-button-style\"\n"
+                       "    {\n"
+                       "         GtkWidget::focus-line-width=0\n"
+                       "         GtkWidget::focus-padding=0\n"
+                       "    }\n"
+                       "\n"
+                       "  widget \"*.workspace-button\" style \"workspace-browser-applet-button-style\"\n");
+
   if (strcmp (iid, "OAFIID:Herzis_WorkspaceBrowserApplet") != 0)
     return FALSE;
 
