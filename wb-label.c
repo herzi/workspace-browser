@@ -24,7 +24,9 @@ G_DEFINE_TYPE (WbLabel, wb_label, GTK_TYPE_LABEL);
 
 static void
 wb_label_init (WbLabel* self)
-{}
+{
+  gtk_misc_set_alignment (GTK_MISC (self), 0.0, 0.5);
+}
 
 static void
 size_allocate (GtkWidget    * widget,

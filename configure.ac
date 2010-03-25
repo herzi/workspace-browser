@@ -1,4 +1,4 @@
-AC_INIT(Workspace Applet, 0.0.1, http://no.website.yet/, workspace-applet)
+AC_INIT(Workspace Applet, 0.0.2, http://github.com/herzi/workspace-browser/issues, workspace-applet)
 AM_INIT_AUTOMAKE(1.9 dist-bzip2 no-define foreign)
 
 F77=no
