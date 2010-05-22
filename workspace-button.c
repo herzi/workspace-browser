@@ -18,6 +18,8 @@
  * USA
  */
 
+#include "compat-gtk.h"
+
 #include "workspace-button.h"
 #include "wb-label.h"
 #include "window-menu-item.h"

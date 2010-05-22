@@ -27,6 +27,7 @@ workspace_browser_SOURCES=\
 libworkspace_la_CPPFLAGS=$(WA_CFLAGS) $(WARN_CFLAGS)
 libworkspace_la_LIBADD=$(WA_LIBS)
 libworkspace_la_SOURCES=\
+	compat-gtk.h \
 	wb-label.c \
 	wb-label.h \
 	window-menu-item.c \
